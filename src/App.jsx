@@ -280,7 +280,6 @@ function Tile({ value, tone, riskLabel, evLabel, isOpen, onOpen, onSelect, menuP
     >
       <div className="cell-label">
         {showVoltorb ? (
-            /* CAMBIO: Quitada la barra inicial */
             <img src="voltorb.png" alt="Voltorb" className="voltorb-sprite" />
         ) : value === 'unknown' ? '?' : value}
       </div>
@@ -311,7 +310,6 @@ function Tile({ value, tone, riskLabel, evLabel, isOpen, onOpen, onSelect, menuP
             <button onClick={(e) => { e.stopPropagation(); onSelect(2) }}>2</button>
             <button onClick={(e) => { e.stopPropagation(); onSelect(3) }}>3</button>
             <button className="danger" onClick={(e) => { e.stopPropagation(); onSelect('voltorb') }}>
-              {/* CAMBIO: Quitada la barra inicial */}
               <img src="voltorbicon.png" alt="" />
             </button>
             <button className="ghost-btn" onClick={(e) => { e.stopPropagation(); onSelect('unknown') }}>Clear</button>
@@ -399,7 +397,6 @@ function App() {
               <span className="pill recommended-pill">Safe</span>
               <span className="pill risk-pill">Risky</span>
               <span className="pill voltorb-pill">
-                {/* CAMBIO: Quitada la barra inicial */}
                 <img src="voltorbicon.png" alt="Voltorb" /> Voltorb
               </span>
             </div>
@@ -466,7 +463,6 @@ function App() {
                         onChange={(e) => updateClue(setRowClues, r, 'sum', e.target.value)}
                       />
                       <div className="voltorb-clue">
-                        {/* CAMBIO: Quitada la barra inicial */}
                         <img src="voltorbicon.png" alt="Voltorb count" />
                         <input
                           type="number"
@@ -495,7 +491,6 @@ function App() {
                       onChange={(e) => updateClue(setColClues, c, 'sum', e.target.value)}
                     />
                     <div className="voltorb-clue">
-                      {/* CAMBIO: Quitada la barra inicial */}
                       <img src="voltorbicon.png" alt="Voltorb count" />
                       <input
                         type="number"

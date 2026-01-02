@@ -14,7 +14,6 @@
 
 * { box-sizing: border-box; }
 
-/* Quitar flechas de inputs numéricos */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { -moz-appearance: textfield; }
@@ -39,7 +38,6 @@ button { font-family: inherit; }
   color: #e9ecf2;
 }
 
-/* HERO */
 .hero {
   display: flex;
   justify-content: space-between;
@@ -81,7 +79,6 @@ button { font-family: inherit; }
 }
 .ghost:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.4); }
 
-/* LAYOUT PRINCIPAL */
 .layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -118,7 +115,6 @@ button { font-family: inherit; }
 .panel h2 { margin: 0; font-size: 18px; }
 .hint { margin: 4px 0 0; color: #9fb3d9; font-size: 13px; }
 
-/* LEYENDA */
 .mini-legend {
   display: flex;
   gap: 8px;
@@ -126,6 +122,7 @@ button { font-family: inherit; }
   font-size: 12px;
   color: #9fb3d9;
 }
+
 .pill {
   display: inline-flex;
   align-items: center;
@@ -138,19 +135,16 @@ button { font-family: inherit; }
   letter-spacing: 0.05em;
 }
 
-/* --- CAMBIO: Color dorado para Recommended/Safe --- */
 .recommended-pill { 
   background: rgba(255, 215, 0, 0.15); 
   color: #ffd700; 
   border: 1px solid rgba(255, 215, 0, 0.4); 
 }
-/* ------------------------------------------------ */
 
 .risk-pill { background: rgba(242, 166, 90, 0.15); color: #f2a65a; border: 1px solid rgba(242, 166, 90, 0.3); }
 .voltorb-pill { background: rgba(243, 114, 127, 0.15); color: #f3727f; border: 1px solid rgba(243, 114, 127, 0.3); gap: 6px; }
 .voltorb-pill img { width: 14px; height: 14px; object-fit: contain; }
 
-/* TABLERO GRID */
 .board-wrapper { 
   width: 100%; 
   overflow-x: auto; 
@@ -167,9 +161,9 @@ button { font-family: inherit; }
   min-width: 600px;
   margin: 0 auto;
 }
+
 .row, .bottom-clues { display: contents; }
 
-/* CELDAS DEL JUEGO */
 .cell {
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -195,7 +189,6 @@ button { font-family: inherit; }
   z-index: 10;
 }
 
-/* ESTADOS DE CELDA */
 .cell.is-open {
   z-index: 100 !important;
   border-color: #bcd2ff;
@@ -204,13 +197,10 @@ button { font-family: inherit; }
   transform: none !important;
 }
 
-/* --- CAMBIO: ESTILO DORADO CON ANIMACIÓN --- */
 .cell.safe { 
   border-color: rgba(255, 215, 0, 0.8); 
   background: rgba(255, 215, 0, 0.12);
-  /* Sombra inicial dorada */
   box-shadow: 0 0 25px rgba(255, 215, 0, 0.25);
-  /* Animación de latido */
   animation: safePulse 2s infinite ease-in-out;
 }
 
@@ -220,7 +210,7 @@ button { font-family: inherit; }
     border-color: rgba(255, 215, 0, 0.6);
   }
   50% {
-    box-shadow: 0 0 45px rgba(255, 215, 0, 0.5); /* Brillo intenso */
+    box-shadow: 0 0 45px rgba(255, 215, 0, 0.5);
     border-color: rgba(255, 215, 0, 1);
   }
   100% {
@@ -228,7 +218,6 @@ button { font-family: inherit; }
     border-color: rgba(255, 215, 0, 0.6);
   }
 }
-/* ------------------------------------------ */
 
 .cell.warning { border-color: rgba(242, 166, 90, 0.9); }
 .cell.certain { 
@@ -242,9 +231,9 @@ button { font-family: inherit; }
   font-family: 'Press Start 2P', 'Space Grotesk', 'Segoe UI', sans-serif;
   margin-bottom: 4px;
 }
+
 .cell-meta { display: flex; flex-direction: column; gap: 2px; color: #9fb3d9; font-size: 11px; font-weight: 600; }
 
-/* MENU DESPLEGABLE INTELIGENTE */
 .cell-menu {
   position: absolute;
   width: 180px;
@@ -277,12 +266,12 @@ button { font-family: inherit; }
   justify-content: center;
   align-items: center;
 }
+
 .cell-menu-grid button:hover { border-color: rgba(150, 181, 255, 0.8); background: rgba(150, 181, 255, 0.12); }
 .cell-menu-grid button.danger { border-color: rgba(243, 114, 127, 0.5); background: rgba(243, 114, 127, 0.16); }
 .cell-menu-grid .ghost-btn { grid-column: span 2; border-style: dashed; background: transparent; color: #9fb3d9; font-size: 12px;}
 .cell-menu-grid button img { width: 24px; height: 24px; object-fit: contain; }
 
-/* PISTAS INPUTS */
 .clue {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -293,6 +282,7 @@ button { font-family: inherit; }
   gap: 8px;
   justify-content: center;
 }
+
 .clue-right { width: 100px; }
 .bottom-clues .clue { width: 100%; }
 
@@ -306,13 +296,13 @@ button { font-family: inherit; }
   font-size: 13px;
   text-align: center;
 }
+
 .clue input:focus { outline: 1px solid rgba(150, 181, 255, 0.6); border-color: rgba(150, 181, 255, 0.6); }
 
 .voltorb-clue { display: flex; align-items: center; gap: 6px; }
 .voltorb-clue img { width: 14px; height: 14px; opacity: 0.8; }
 .clue-spacer { visibility: hidden; }
 
-/* INSIGHTS PANEL */
 .insights { display: flex; flex-direction: column; gap: 16px; }
 .insight-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .stat-card { padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); text-align: center; }
@@ -330,10 +320,9 @@ button { font-family: inherit; }
 .guide li { margin-bottom: 8px; }
 
 .advice { font-size: 14px; margin: 0; color: #cfd7e5; }
-.advice.highlight { color: #ffd700; /* Texto dorado también en la guía */ }
+.advice.highlight { color: #ffd700; }
 .voltorb-sprite { width: 28px; height: 28px; image-rendering: pixelated; }
 
-/* LEVEL COMPLETE */
 .level-complete {
   background: rgba(67, 216, 155, 0.15);
   border: 1px solid rgba(67, 216, 155, 0.4);
