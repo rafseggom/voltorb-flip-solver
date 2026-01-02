@@ -170,16 +170,26 @@ function evaluateBoards(grid, rowClues, colClues) {
   return { solutions, stats: probabilities, recommended, issues: [] }
 }
 
+function Tile({ value, tone, riskLabel, evLabel, onClick }) {
+  return (
+    <button className={`cell ${tone}`} onClick={onClick}>
+      <div className="cell-label">
+        {value === 'voltorb' ? <img src="/voltorb.png" alt="Voltorb" className="voltorb-sprite" /> : value === 'unknown' ? '?' : value}
+      </div>
+      {riskLabel && evLabel && (
+        <div className="cell-meta">
+          <span>{riskLabel}</span>
+          <span>{evLabel}</span>
+        </div>
+      )}
+    </button>
+  )
+}
+
 function App() {
-  const [grid, setGrid] = useState(
-    Array.from({ length: GRID_SIZE }, () => Array.from({ length: GRID_SIZE }, () => 'unknown'))
-  )
-  const [rowClues, setRowClues] = useState(
-    Array.from({ length: GRID_SIZE }, () => ({ sum: '', voltorbs: '' }))
-  )
-  const [colClues, setColClues] = useState(
-    Array.from({ length: GRID_SIZE }, () => ({ sum: '', voltorbs: '' }))
-  )
+  const [grid, setGrid] = useState(Array.from({ length: GRID_SIZE }, () => Array.from({ length: GRID_SIZE }, () => 'unknown')))
+  const [rowClues, setRowClues] = useState(Array.from({ length: GRID_SIZE }, () => ({ sum: '', voltorbs: '' })))
+  const [colClues, setColClues] = useState(Array.from({ length: GRID_SIZE }, () => ({ sum: '', voltorbs: '' })))
 
   const results = useMemo(() => evaluateBoards(grid, rowClues, colClues), [grid, rowClues, colClues])
 
@@ -203,12 +213,6 @@ function App() {
     setGrid(Array.from({ length: GRID_SIZE }, () => Array.from({ length: GRID_SIZE }, () => 'unknown')))
     setRowClues(Array.from({ length: GRID_SIZE }, () => ({ sum: '', voltorbs: '' })))
     setColClues(Array.from({ length: GRID_SIZE }, () => ({ sum: '', voltorbs: '' })))
-  }
-
-  const getCellLabel = (value) => {
-    if (value === 'unknown') return '?'
-    if (value === 'voltorb') return 'V'
-    return value
   }
 
   return (
@@ -235,91 +239,82 @@ function App() {
               <p className="hint">Tap a tile to cycle Unknown → 1 → 2 → 3 → Voltorb.</p>
             </div>
             <div className="mini-legend">
-              <span className="legend dot safe" /> safest
-              <span className="legend dot warning" /> risky
-              <span className="legend dot certain" /> confirmed
+              <span className="pill recommended-pill">Recommended</span>
+              <span className="pill risk-pill">Higher risk</span>
+              <span className="pill voltorb-pill"><img src="/voltorbicon.png" alt="Voltorb" /> Voltorb</span>
             </div>
           </div>
 
-          <div className="board-grid" style={{ gridTemplateColumns: `160px repeat(${GRID_SIZE}, 1fr)` }}>
-            <div className="corner">
-              <p className="corner-title">Clues</p>
-              <p className="corner-sub">Sum | Voltorbs</p>
-            </div>
+          <div className="board-wrapper">
+            <div className="grid">
+              {grid.map((row, r) => (
+                <Fragment key={r}>
+                  <div className="row">
+                    {row.map((value, c) => {
+                      const isRecommended = results.recommended.some((item) => item.row === r && item.col === c)
+                      const stats = results.stats?.[r]?.[c]
+                      const risk = stats ? Math.round(stats.voltorbProbability * 100) : null
+                      const expected = stats ? stats.expectedValue.toFixed(2) : null
 
-            {colClues.map((clue, col) => (
-              <div key={`col-${col}`} className="clue-cell">
-                <label>Col {col + 1}</label>
-                <div className="clue-inputs">
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="Sum"
-                    value={clue.sum}
-                    onChange={(e) => updateClue(setColClues, col, 'sum', e.target.value)}
-                  />
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="Voltorbs"
-                    value={clue.voltorbs}
-                    onChange={(e) => updateClue(setColClues, col, 'voltorbs', e.target.value)}
-                  />
-                </div>
-              </div>
-            ))}
+                      let tone = 'neutral'
+                      if (value === 'voltorb') tone = 'certain'
+                      else if (isRecommended) tone = 'safe'
+                      else if (stats && stats.voltorbProbability > 0.45) tone = 'warning'
 
-            {rowClues.map((clue, row) => (
-              <Fragment key={`row-${row}`}>
-                <div className="clue-cell">
-                  <label>Row {row + 1}</label>
-                  <div className="clue-inputs">
+                      return (
+                        <Tile
+                          key={`${r}-${c}`}
+                          value={value}
+                          tone={tone}
+                          riskLabel={risk !== null ? `${risk}% risk` : null}
+                          evLabel={expected !== null ? `EV ${expected}` : null}
+                          onClick={() => cycleCellState(r, c)}
+                        />
+                      )
+                    })}
+                    <div className="clue clue-right">
+                      <input
+                        aria-label={`Row ${r + 1} sum`}
+                        placeholder="Sum"
+                        value={rowClues[r].sum}
+                        onChange={(e) => updateClue(setRowClues, r, 'sum', e.target.value)}
+                      />
+                      <div className="voltorb-clue">
+                        <img src="/voltorbicon.png" alt="Voltorb count" />
+                        <input
+                          aria-label={`Row ${r + 1} voltorbs`}
+                          placeholder="#"
+                          value={rowClues[r].voltorbs}
+                          onChange={(e) => updateClue(setRowClues, r, 'voltorbs', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Fragment>
+              ))}
+              <div className="bottom-clues">
+                {colClues.map((clue, c) => (
+                  <div className="clue clue-bottom" key={c}>
                     <input
-                      type="number"
-                      min="0"
+                      aria-label={`Column ${c + 1} sum`}
                       placeholder="Sum"
                       value={clue.sum}
-                      onChange={(e) => updateClue(setRowClues, row, 'sum', e.target.value)}
+                      onChange={(e) => updateClue(setColClues, c, 'sum', e.target.value)}
                     />
-                    <input
-                      type="number"
-                      min="0"
-                      placeholder="Voltorbs"
-                      value={clue.voltorbs}
-                      onChange={(e) => updateClue(setRowClues, row, 'voltorbs', e.target.value)}
-                    />
+                    <div className="voltorb-clue">
+                      <img src="/voltorbicon.png" alt="Voltorb count" />
+                      <input
+                        aria-label={`Column ${c + 1} voltorbs`}
+                        placeholder="#"
+                        value={clue.voltorbs}
+                        onChange={(e) => updateClue(setColClues, c, 'voltorbs', e.target.value)}
+                      />
+                    </div>
                   </div>
-                </div>
-
-                {grid[row].map((value, col) => {
-                  const isRecommended = results.recommended.some((item) => item.row === row && item.col === col)
-                  const stats = results.stats?.[row]?.[col]
-                  const risk = stats ? Math.round(stats.voltorbProbability * 100) : null
-                  const expected = stats ? stats.expectedValue.toFixed(2) : null
-
-                  let tone = 'neutral'
-                  if (value === 'voltorb') tone = 'certain'
-                  else if (isRecommended) tone = 'safe'
-                  else if (stats && stats.voltorbProbability > 0.45) tone = 'warning'
-
-                  return (
-                    <button
-                      key={`${row}-${col}`}
-                      className={`cell ${tone}`}
-                      onClick={() => cycleCellState(row, col)}
-                    >
-                      <div className="cell-label">{getCellLabel(value)}</div>
-                      {stats && (
-                        <div className="cell-meta">
-                          <span>{risk}% risk</span>
-                          <span>EV {expected}</span>
-                        </div>
-                      )}
-                    </button>
-                  )
-                })}
-              </Fragment>
-            ))}
+                ))}
+                <div className="clue-spacer" aria-hidden="true"></div>
+              </div>
+            </div>
           </div>
         </section>
 

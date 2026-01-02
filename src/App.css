@@ -255,6 +255,68 @@
 .guide li { margin-bottom: 6px; }
 .microcopy { margin: 0; color: #9fb3d9; font-size: 13px; }
 
+.board-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr) auto;
+  gap: 10px;
+  justify-content: center;
+  max-width: fit-content;
+  margin: 0 auto;
+}
+.row,
+.bottom-clues {
+  display: contents;
+}
+
+.bottom-clues .clue {
+  width: 100%;
+  box-sizing: border-box; 
+}
+
+.clue-spacer {
+  visibility: hidden;
+}
+
+.clue {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.clue input {
+  width: 100%;
+}
+.voltorb-clue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.voltorb-clue img {
+  width: 14px;
+  height: 14px;
+}
+.cell {
+  position: relative;
+}
+.voltorb-sprite {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+}
+
+.voltorb-pill img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain; 
+}
+
 @media (max-width: 960px) {
   .layout { grid-template-columns: 1fr; }
   .hero { flex-direction: column; }
@@ -264,4 +326,46 @@
 @media (max-width: 720px) {
   .board-grid { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; }
   .page { padding: 20px 16px 48px; }
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px; /* Bordes totalmente redondeados */
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 8px; /* Separación entre ellas */
+}
+
+/* 🟢 RECOMMENDED (Verde) */
+.recommended-pill {
+  background: rgba(67, 216, 155, 0.15); 
+  color: #43d89b;                        
+  border: 1px solid rgba(67, 216, 155, 0.3);
+}
+
+/* 🟠 HIGHER RISK (Naranja) */
+.risk-pill {
+  background: rgba(242, 166, 90, 0.15); 
+  color: #f2a65a;                       
+  border: 1px solid rgba(242, 166, 90, 0.3);
+}
+
+/* 🔴 VOLTORB (Rojo/Rosa) */
+.voltorb-pill {
+  background: rgba(243, 114, 127, 0.15);
+  color: #f3727f;
+  border: 1px solid rgba(243, 114, 127, 0.3);
+  gap: 6px; /* Espacio entre el icono y el texto */
+}
+
+
+.voltorb-pill img {
+  width: 16px; 
+  height: 16px;
+  object-fit: contain;
 }
