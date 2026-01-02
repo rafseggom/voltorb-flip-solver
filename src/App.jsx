@@ -46,12 +46,10 @@ function filterRowPatterns(knownRow, clue) {
   })
 }
 
-// --- CORRECCIÓN MATEMÁTICA AQUÍ ---
 function hasPointsLeft(gridLine, clue) {
   const sumTarget = parseClueValue(clue.sum)
   const voltorbTarget = parseClueValue(clue.voltorbs)
   
-  // Si falta información crítica, asumimos que AÚN quedan puntos para no cerrar el nivel antes de tiempo
   if (sumTarget === null) return true 
 
   let currentSum = 0
@@ -66,19 +64,12 @@ function hasPointsLeft(gridLine, clue) {
 
   const remainingSum = sumTarget - currentSum
   
-  // Calculamos cuántos Voltorbs quedan por encontrar en esta fila
-  // Si no puso pista de voltorbs, asumimos 0 para ser conservadores, 
-  // pero lo ideal es que si falta el dato, no podemos asegurar que el nivel acabó.
   let remainingVoltorbs = 0
   if (voltorbTarget !== null) {
       remainingVoltorbs = Math.max(0, voltorbTarget - currentVoltorbs)
   }
 
-  // Las casillas que REALMENTE pueden tener puntos son: (Huecos - Voltorbs esperados)
   const valueSlots = Math.max(0, unknownCount - remainingVoltorbs)
-
-  // Si la suma que falta es mayor que los huecos para valores,
-  // significa que el promedio es > 1. Es decir, hay al menos un 2 o un 3.
   return remainingSum > valueSlots
 }
 
@@ -127,13 +118,7 @@ function evaluateBoards(grid, rowClues, colClues) {
 
   const isLevelComplete = validCluesFound && !potentialPointsRemaining
 
-  // --- SOLVER ---
-  
-  // Nota: Aunque detectemos "Zero Hint", seguimos calculando probabilidades
-  // para poder marcar los Voltorbs 100% seguros en otras filas.
-  
   const zeroHintSafeTiles = []
-  // Revisión rápida de pistas 0 para priorizarlas en 'recommended'
   rowClues.forEach((clue, r) => {
     if (parseClueValue(clue.voltorbs) === 0 && hasPointsLeft(grid[r], clue)) {
       for (let c = 0; c < GRID_SIZE; c++) {
@@ -234,8 +219,6 @@ function evaluateBoards(grid, rowClues, colClues) {
     }))
   )
 
-  // Si tenemos 'zeroHintSafeTiles', esas tienen prioridad absoluta para RECOMENDACIÓN
-  // pero aún así devolvemos stats completas para pintar Voltorbs 100%
   let recommended = []
   let mode = 'probabilistic'
 
@@ -277,7 +260,6 @@ function evaluateBoards(grid, rowClues, colClues) {
 }
 
 function Tile({ value, tone, riskLabel, evLabel, isOpen, onOpen, onSelect, menuPosition, isDetectedVoltorb }) {
-  // Si es un voltorb detectado, forzamos la apariencia visual
   const showVoltorb = value === 'voltorb' || isDetectedVoltorb
 
   return (
@@ -298,11 +280,11 @@ function Tile({ value, tone, riskLabel, evLabel, isOpen, onOpen, onSelect, menuP
     >
       <div className="cell-label">
         {showVoltorb ? (
-            <img src="/voltorb.png" alt="Voltorb" className="voltorb-sprite" />
+            /* CAMBIO: Quitada la barra inicial */
+            <img src="voltorb.png" alt="Voltorb" className="voltorb-sprite" />
         ) : value === 'unknown' ? '?' : value}
       </div>
       
-      {/* Ocultamos el label de riesgo si ya sabemos que es Voltorb */}
       {value === 'unknown' && !isDetectedVoltorb && riskLabel && (
         <div className="cell-meta">
           <span>{riskLabel}</span>
@@ -310,7 +292,6 @@ function Tile({ value, tone, riskLabel, evLabel, isOpen, onOpen, onSelect, menuP
         </div>
       )}
 
-      {/* Label especial para detectados */}
       {isDetectedVoltorb && value === 'unknown' && (
         <div className="cell-meta danger-text">
           100% VOLTORB
@@ -330,7 +311,8 @@ function Tile({ value, tone, riskLabel, evLabel, isOpen, onOpen, onSelect, menuP
             <button onClick={(e) => { e.stopPropagation(); onSelect(2) }}>2</button>
             <button onClick={(e) => { e.stopPropagation(); onSelect(3) }}>3</button>
             <button className="danger" onClick={(e) => { e.stopPropagation(); onSelect('voltorb') }}>
-              <img src="/voltorbicon.png" alt="" />
+              {/* CAMBIO: Quitada la barra inicial */}
+              <img src="voltorbicon.png" alt="" />
             </button>
             <button className="ghost-btn" onClick={(e) => { e.stopPropagation(); onSelect('unknown') }}>Clear</button>
           </div>
@@ -416,7 +398,10 @@ function App() {
             <div className="mini-legend">
               <span className="pill recommended-pill">Safe</span>
               <span className="pill risk-pill">Risky</span>
-              <span className="pill voltorb-pill"><img src="/voltorbicon.png" alt="Voltorb" /> Voltorb</span>
+              <span className="pill voltorb-pill">
+                {/* CAMBIO: Quitada la barra inicial */}
+                <img src="voltorbicon.png" alt="Voltorb" /> Voltorb
+              </span>
             </div>
           </div>
           <div className="board-wrapper">
@@ -432,8 +417,6 @@ function App() {
                       const expected = stats ? stats.expectedValue.toFixed(2) : null
                       const riskPercent = riskProb !== null ? Math.round(riskProb * 100) : null
 
-                      // DETECCIÓN DE CERTEZA 100%
-                      // Si la probabilidad es 1 (o muy cercana por flotantes), es un Voltorb seguro.
                       const isDetectedVoltorb = riskProb !== null && riskProb > 0.999
 
                       let tone = 'neutral'
@@ -441,7 +424,7 @@ function App() {
                       
                       if (value === 'unknown') {
                         if (isDetectedVoltorb) {
-                           tone = 'certain' // Usamos el tono rojo directamente
+                           tone = 'certain' 
                         } else if (isRecommended) {
                           tone = 'safe'
                           riskLabel = (results.mode === 'certainty' || riskPercent === 0) ? '0% Risk' : `${riskPercent}% Risk`
@@ -483,7 +466,8 @@ function App() {
                         onChange={(e) => updateClue(setRowClues, r, 'sum', e.target.value)}
                       />
                       <div className="voltorb-clue">
-                        <img src="/voltorbicon.png" alt="Voltorb count" />
+                        {/* CAMBIO: Quitada la barra inicial */}
+                        <img src="voltorbicon.png" alt="Voltorb count" />
                         <input
                           type="number"
                           min="0"
@@ -511,7 +495,8 @@ function App() {
                       onChange={(e) => updateClue(setColClues, c, 'sum', e.target.value)}
                     />
                     <div className="voltorb-clue">
-                      <img src="/voltorbicon.png" alt="Voltorb count" />
+                      {/* CAMBIO: Quitada la barra inicial */}
+                      <img src="voltorbicon.png" alt="Voltorb count" />
                       <input
                         type="number"
                         min="0"
